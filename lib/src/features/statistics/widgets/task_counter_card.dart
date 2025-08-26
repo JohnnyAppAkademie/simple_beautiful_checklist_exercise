@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class TaskCounterCard extends StatelessWidget {
   final int taskCount;
+  final String title;
 
-  const TaskCounterCard({super.key, required this.taskCount});
+  const TaskCounterCard({
+    super.key,
+    required this.taskCount,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +41,9 @@ class TaskCounterCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  "Anzahl der offenen Tasks",
+                  title,
                   style: TextStyle(
                     fontSize: 18,
                   ),

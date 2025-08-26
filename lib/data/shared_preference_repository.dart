@@ -32,6 +32,30 @@ class SharedPreferencesRepository implements DatabaseRepository {
     await _data.remove(checklistKey);
   }
 
+  // Zähler hochzählen
+  Future<void> incrementCounter(String key) async {
+    if (key == doneKey || key == deleteKey) {
+      final current = _data.getInt(key) ?? 0;
+      await _data.setInt(key, current + 1);
+    }
+  }
+
+  // Zähler auslesen
+  Future<int> getCounter(String key) async {
+    if (key == doneKey || key == deleteKey) {
+      return _data.getInt(key) ?? 0;
+    } else {
+      return 0;
+    }
+  }
+
+  // Zähler löschen
+  Future<void> clearCounter(String key) async {
+    if (key == doneKey || key == deleteKey) {
+      await _data.remove(key);
+    }
+  }
+
   @override
   Future<void> addItem(String item) async {
     final items = _data.getStringList(checklistKey) ?? [];

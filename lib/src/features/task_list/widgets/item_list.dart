@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simple_beautiful_checklist_exercise/data/database_repository.dart';
+import 'package:simple_beautiful_checklist_exercise/data/shared_preference_repository.dart';
 
 class ItemList extends StatelessWidget {
   const ItemList({
@@ -19,6 +20,24 @@ class ItemList extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         return ListTile(
+          leading: Checkbox(
+            value: false, // immer un-checked beim Rendern
+            onChanged: (checked) async {
+              if (checked == true) {
+                // Task löschen
+                await repository.deleteItem(index);
+
+                // Done-Zähler hochzählen
+                if (repository is SharedPreferencesRepository) {
+                  await (repository as SharedPreferencesRepository)
+                      .incrementCounter(SharedPreferencesRepository.doneKey);
+                }
+
+                // UI aktualisieren
+                updateOnChange();
+              }
+            },
+          ),
           title: Text(items[index]),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -64,8 +83,17 @@ class ItemList extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () {
+                onPressed: () async {
                   repository.deleteItem(index);
+
+                  // Done-Zähler hochzählen
+                  if (repository is SharedPreferencesRepository) {
+                    await (repository as SharedPreferencesRepository)
+                        .incrementCounter(
+                          SharedPreferencesRepository.deleteKey,
+                        );
+                  }
+
                   updateOnChange();
                 },
               ),
